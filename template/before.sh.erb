@@ -1,3 +1,8 @@
+<%-
+  r_version = context.version.split(':')[0]
+  rstudio_version = context.version.split(':')[1]
+%>
+
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
 
@@ -6,22 +11,8 @@ port=$(find_port ${host})
 
 # Define a password and export it for RStudio authentication
 password="$(create_passwd 16)"
+#export SINGULARITYENV_RSTUDIO_PASSWORD="${password}"
 export RSTUDIO_PASSWORD="${password}"
 
-<%- if context.include_tutorials == "1" -%>
-<%-
-    workshop_base = "/users/PZS0645/support/workshop/ParallelR/"
-    workshop_src = if /3.6.3/.match?(context.version)
-                      workshop_base + "3.6.3/"
-                   else
-                      workshop_base + "3.6.1/"
-                   end
--%>
-#
-# Create workshop/tutorial notebooks
-#
-# Copy over workshops/tutorials
-set -x
-rsync -avz "<%= workshop_src %>" "<%= session.staged_root %>/ParallelR/"
-{ set +x; } 2>/dev/null
-<%- end -%>
+export rstudio_version="<%= rstudio_version %>"
+export r_version="<%= r_version %>"

@@ -2,13 +2,12 @@
 
 <%-
   session_dir = session.staged_root
-  tutorial_dir = session.staged_root.join('ParallelR')
+  r_version = context.version.split(':')[0]
+  rstudio_version = context.version.split(':')[1]
 %>
 
 # Load the required environment
 setup_env () {
-  module purge
-
   # The rserver container module should set these environment variables:
 
   #   SINGULARITY_BINDPATH="/etc,/media,/mnt,/opt,/run,/srv,/usr,/var,/users"
@@ -17,30 +16,21 @@ setup_env () {
  
   # SINGULARITY_BINDPATH is being used to bind all RStudio's requirements from
   # the host into the guest, and so those values may vary between sites.
-
-  module load ondemand
-  module load xalt/latest rstudio_launcher/centos7 <%= context.version %>
-  <%- if context.include_tutorials == "1" %>
-  export R_LIBS_USER="<%= tutorial_dir %>/Rworkshop"
-  mkdir -p "<%= tutorial_dir %>/Rworkshop"
-  export SINGULARITY_HOME="<%= tutorial_dir %>"
-  <%- end %>
+  export COMMON=${HOME/#\/home/\/common}
+  . /util/opt/lmod/lmod/init/profile
+  export -f module
+  module use /util/opt/hcc-modules/Common
+  module purge
+  module load singularity
+  mkdir /tmp/rstudio-run /tmp/rstudio-lib
+  export RSTUDIO_SERVER_IMAGE="/work/HCC/SINGULARITY/IMAGES/rstudio-<%= rstudio_version %>-<%= r_version %>.sif"
+  export SINGULARITYENV_USER=$USER
+  export SINGULARITY_BINDPATH="/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
+  export PATH=/usr/lib/rstudio-server/bin:$PATH
+  export WORKING_DIR="<%= session_dir %>"
+  
 }
 setup_env
-
-# if you're in a specialized version of RStudio (classes or tutorials)
-if [[ "$SINGULARITY_HOME" != "$HOME" ]]; then
-
-  # prepare the host directories and files
-  mkdir -p "<%= tutorial_dir %>"
-  mkdir -p "$SINGULARITY_HOME"
-  mv "<%= session_dir %>/bin" "<%= tutorial_dir %>"
-  touch "$SINGULARITY_HOME/0_${OSC_CLASS_ID:-osc_class}.md"
-
-  export WORKING_DIR="<%= tutorial_dir %>"
-else
-  export WORKING_DIR="<%= session_dir %>"
-fi
 
 #
 # Start RStudio Server
@@ -63,8 +53,8 @@ sed 's/^ \{2\}//' > "$WORKING_DIR/rsession.sh" << EOL
   # rsession.sh doesn't share the same env as the outside script, so these
   # need to be set explicitly
   export R_LIBS_SITE="${R_LIBS_SITE}"
-  export TZ="US/Eastern"
-  export HOME="$SINGULARITY_HOME"
+  export TZ="US/Central"
+  export HOME="$WORK"
   export MODULEPATH_ROOT="$MODULEPATH_ROOT"
   export MODULEPATH="$MODULEPATH"
   export LMOD_PKG="$LMOD_PKG"
@@ -77,8 +67,8 @@ EOL
 )
 chmod 700 "$WORKING_DIR/rsession.sh"
 
-# Set working directory to home directory
-cd "${SINGULARITY_HOME}"
+# Set working directory to work directory
+cd "${WORK}"
 
 # Output debug info
 module list
@@ -88,18 +78,11 @@ set -x
 # Launch the RStudio Server
 echo "Starting up rserver..."
 
-# --contain is used to override the bindpaths specified in OSC's
-# singularity.conf which would otherwise conflict in /etc
-# using --contain requires us to bind mount in addition directories including
-# /dev and /proc
-# optional_tutorial_home_bind is used when include_tutorials to change the home
-# directory to get a clean environment without clobbering files
-SINGULARITYENV_LD_LIBRARY_PATH="$LD_LIBRARY_PATH" singularity run --contain \
- -B $TMPDIR:/tmp \
- -B $WORKING_DIR \
- "$RSTUDIO_SERVER_IMAGE" \
- --www-port "${port}" \
- --auth-none 0 \
- --auth-pam-helper-path "${RSTUDIO_AUTH}" \
- --auth-encrypt-password 0 \
- --rsession-path "${RSESSION_WRAPPER_FILE}"
+singularity exec -B $WORKING_DIR "$RSTUDIO_SERVER_IMAGE" rserver \
+ --www-port="${port}" \
+ --auth-none=0 \
+ --auth-pam-helper-path="${RSTUDIO_AUTH}" \
+ --auth-encrypt-password=0 \
+ --rsession-path="${RSESSION_WRAPPER_FILE}" \
+ --server-app-armor-enabled=0 \
+ --secure-cookie-key-file="${TMPDIR}/rstudio-server/secure-cookie-key"

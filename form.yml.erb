@@ -1,190 +1,99 @@
-<%-
-  groups = OodSupport::User.new.groups.sort_by(&:id).tap { |groups|
-    groups.unshift(groups.delete(OodSupport::Process.group))
-  }.map(&:name).grep(/^P./)
--%>
 ---
-cluster:
-  - "owens"
-  - "pitzer"
-form:
-  - version
-  - account
-  - bc_num_hours
-  - node_type
-  - num_cores
-  - include_tutorials
-  - bc_email_on_started
+cluster: "rhino"
+title: "RStudio Server"
+description: |
+  This app will launch an RStudio server.
+
+# Define attributes that aren't meant to be modified by the user nor visible in the form
 attributes:
-  num_cores:
+  bc_queue:
+    label: "Partition selection"
+    value: "batch"
+    help: |
+      - `batch` - The normal general access partition
+      - `gpu` - The gpu partition
+      - *other partitions may be specified if your account has access*
+  bc_num_slots: 1
+  bc_num_cores:
     widget: "number_field"
     label: "Number of cores"
-    value: 1
-    help: |
-      Number of cores on node type (4 GB per core unless requesting whole
-      node). Leave blank if requesting full node.
+    help: "Number of cores requested on a node (min 1, max 8)"
     min: 1
-    max: 28
+    max: 8
     step: 1
-  account:
-    label: "Project"
+    value: "1"
+    id: "num_cores"
+  bc_num_hours:
+    widget: "number_field"
+    label: "Running time in hours"
+    help: "Maximum runtime in hours of Jupyter notebook (min 1, max 8)"
+    min: 1
+    max: 8
+    step: 1
+    value: "1"
+  bc_memory:
+    widget: "number_field"
+    label: "Requested RAM in GBs"
+    help: "Maximum memory requested for Jupyter notebook (min 1GB, max 16GBs)"
+    min: 1
+    max: 16
+    step: 1
+    value: "1"
+    id: "memory"
+  qos_type:
     widget: select
-    options:
-      <%- groups.each do |group| %>
-      - "<%= group %>"
-      <%- end %>
-  node_type:
-    widget: select
-    label: "Node type"
+    label: "QoS type"
+    value: "short"
     help: |
-      - **Standard Compute** <br>
-        These are standard HPC machines. Owens has 648 of these nodes with 40
-        cores and 128 GB of memory. Pitzer has 224 with 40 cores and
-        340 with 48. All pitzer nodes have 192 GB of RAM. Chosing any will decrease
-        your wait time.
-      - **GPU Enabled** <br>
-        These are HPC machines GPUs. Owens has 160 nodes with 1 [NVIDIA Tesla P100 GPU]
-        on Owens and Pitzer has 74 with 2 [NVIDIA Tesla V100 GPUs]. They have the same
-        CPU and memory characteristics of standard compute. Though Pitzer's 40 core machines
-        have 2 GPUs with 16 GB of RAM and 48 core machines have 2with 32 GB of RAM.
-        Densegpu types have 4 GPUs with 16 GB of RAM.
-      - **Large Memory** <br>
-        These are HPC machines with very large amounts of memory. Owens has 16 hugemem
-        with 48 cores and 1.5 TB of RAM. Pitzer has 4 with 3 TB of RAM and 80 cores.
-        Pitzer also has 12 Largmem nodes have 48 cores with 768 GB of RAM.
-
-      [NVIDIA Tesla P100 GPU]: http://www.nvidia.com/object/tesla-p100.html
-      [NVIDIA Tesla V100 GPUs]: https://www.nvidia.com/en-us/data-center/v100/
+      - `short` - Use the short QoS to increase job priority. Limits per user are 6 hour job run time, 2 jobs of 16CPUs or fewer.
+      - `normal` - Use the regular batch queue.
     options:
-      - [
-          "any",     "any",
-          data-min-ppn-owens: 1,
-          data-max-ppn-owens: 28,
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "40 core",     "any-40core",
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 40,
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "48 core",     "any-48core",
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "any gpu",     "gpu",
-          data-min-ppn-owens: 1,
-          data-max-ppn-owens: 28,
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "40 core gpu",     "gpu-40core",
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 40,
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "48 core gpu",     "gpu-48core",
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "hugemem", "hugemem",
-          data-min-ppn-owens: 48,
-          data-max-ppn-owens: 48,
-          data-min-ppn-pitzer: 80,
-          data-max-ppn-pitzer: 80,
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "largemem", "largemem",
-          data-min-ppn-pitzer: 48,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "debug",   "debug",
-          data-min-ppn-owens: 1,
-          data-max-ppn-owens: 28,
-          data-min-ppn-pitzer: 1,
-          data-max-ppn-pitzer: 48,
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
-        ]
+      - ["short", "short"]
+      - ["normal", "normal"]
+  bc_gres:
+    widget: "text_field"
+    label: "GRES"
+    help: "This field is used primarily for gpu submissions. You must specify a gres of at least `gpu` when using the GPU partition. Other possible values may be
+ [found here](https://hcc.unl.edu/docs/submitting_jobs/submitting_gpu_jobs/#requesting-gpu-resources-in-your-slurm-script)."
+    value: ''
+  bc_constraint:
+    widget: "text_field"
+    label: "Job Constraints"
+    help: "Additional constraints for the job. Primarily used for specifying a [GPU type](https://hcc.unl.edu/docs/submitting_jobs/submitting_gpu_jobs/#available
+-gpus) or [node type](https://hcc.unl.edu/docs/submitting_jobs/partitions/#use-of-infiniband-or-opa)."
+  bc_email_address:
+    widget: "email_field"
+    value: ""
+    label: "Email"
+    help: "Email address used for notifications"
+  bc_reservation:
+    widget: "text_field"
+    label: "Reservation"
+    help: "Submit to a specific reservation if your account has access."
+    value: ''
   version:
     widget: select
     label: "R version"
     help: "This defines the version of R you want to load."
     options:
       - [
-          "4.0.2", "app_rstudio_server/4.0.2",
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
+          "4.0 (RStudio 1.4)", "r40:1.4",
         ]
       - [
-          "3.6.3", "app_rstudio_server/3.6.3",
-          data-option-for-owens: true,
-          data-option-for-pitzer: true
+          "3.6 (RStudio 1.2)", "r36:1.2",
         ]
-      - [
-          "3.6.1", "gnu/9.1.0 mkl/2019.0.3 R/3.6.1 rstudio/1.1.380_server texlive",
-          data-option-for-owens: true,
-          data-option-for-pitzer: false
-        ]
-      - [
-          "3.6.0", "gnu/7.3.0 mkl/2018.0.3 R/3.6.0 rstudio/1.1.380_server texlive",
-          data-option-for-owens: true,
-          data-option-for-pitzer: false
-        ]
-      - [
-          "3.6.0", "gnu/7.3.0 mkl/2018.0.3 R/3.6.0 rstudio/1.2.1335 texlive",
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "3.5.2", "intel/18.0.4 R/3.5.2 rstudio/1.1.456 texlive",
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "3.5.1", "intel/18.0.4 R/3.5.1 rstudio/1.1.456 texlive",
-          data-option-for-owens: false,
-          data-option-for-pitzer: true
-        ]
-      - [
-          "3.5.0", "intel/18.0.3 R/3.5.0 rstudio/1.1.380_server texlive",
-          data-option-for-owens: true,
-          data-option-for-pitzer: false
-        ]
-      - [
-          "3.4.2", "intel/16.0.3 R/3.4.2 rstudio/1.1.380_server texlive",
-          data-option-for-owens: true,
-          data-option-for-pitzer: false
-        ]
-      - [
-          "3.3.2", "intel/16.0.3 R/3.3.2 rstudio/1.0.136_server texlive",
-          data-option-for-owens: true,
-          data-option-for-pitzer: false
-        ]
-  include_tutorials:
-    widget: "check_box"
-    label: Include access to OSC tutorial/workshop materials.
-    help: |
-      Accessing the tutorial materials will start you with a clean environment.
-      While running in tutorial mode you will not have access to the files your $HOME.
+
+# Define all attributes, visible or not
+form:
+  - version
+  - bc_num_slots
+  - bc_num_cores
+  - bc_num_hours
+  - bc_memory
+  - qos_type
+  - bc_queue
+  - bc_reservation
+  - bc_gres
+  - bc_constraint
+  - bc_email_address
+  - bc_email_on_started

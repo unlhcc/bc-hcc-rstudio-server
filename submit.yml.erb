@@ -1,46 +1,33 @@
 <%-
-  cores = num_cores.to_i
+cores = bc_num_cores.blank? ? 1 : bc_num_cores.to_i
+mem = bc_memory.blank? ? 1 : bc_memory.to_i
+nodes = bc_num_slots.blank? ? 1 : bc_num_slots.to_i
+r_version = version.split(':')[0]
+rstudio_version = version.split(':')[1]
 
-  if cores == 0 && cluster == "pitzer"
-    # little optimization for pitzer nodes. They want the whole node, if they chose 'any',
-    # it can be scheduled on p18 or p20 nodes. If not, they'll get the constraint below.
-    base_slurm_args = ["--nodes", "1", "--exclusive"]
-  elsif cores == 0
-    # full node on owens
-    cores = 28
-    base_slurm_args = ["--nodes", "1", "--ntasks-per-node", "28"]
-  else
-    base_slurm_args = ["--nodes", "1", "--ntasks-per-node", "#{cores}"]
-  end
-
-  slurm_args = case node_type
-              when "gpu"
-                base_slurm_args += ["--gpus-per-node", "1"]
-              when "gpu-40core"
-                base_slurm_args += ["--gpus-per-node", "1", "--constraint", "40core"]
-              when "gpu-48core"
-                base_slurm_args += ["--gpus-per-node", "1", "--constraint", "48core"]
-              when "any-40core"
-                base_slurm_args += ["--constraint", "40core"]
-              when "any-48core"
-                base_slurm_args += ["--constraint", "48core"]
-              when "hugemem"
-                base_slurm_args += ["--partition", "hugemem", "--exclusive"]
-              when "largemem"
-                base_slurm_args += ["--partition", "largemem", "--exclusive"]
-              when "debug"
-                base_slurm_args += ["--partition", "debug", "--exclusive"]
-              else
-                base_slurm_args
-              end
-
--%>
+%>
 ---
 batch_connect:
-  template: "basic"
+  template: basic
+  conn_params: [r_version, rstudio_version]
 script:
-  accounting_id: "<%= account %>"
+  # Slurm option is mem, memory is passed from the form
+  copy_environment: true
+  email: ["<%= bc_email_address.strip %>"]
   native:
-    <%- slurm_args.each do |arg| %>
-    - "<%= arg %>"
-    <%- end %>
+    - "--qos"
+    - "<%= qos_type %>"
+    - "--mem"
+    - "<%= mem %>GB"
+    - "--licenses"
+    - "common"
+    - "--ntasks-per-node"
+    - "<%= cores %>"
+    - "--nodes"
+    - "<%= nodes %>"
+    - "--constraint"
+    - "<%= bc_constraint.strip %>"
+    - "--gres"
+    - "<%= bc_gres.strip %>"
+    - "--reservation"
+    - "<%= bc_reservation.strip %>"
