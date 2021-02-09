@@ -1,6 +1,6 @@
 # Disable debuginfo as it causes issues with bundled gems that build libraries
 %global debug_package %{nil}
-%global repo_name bc_hcc_rstudio_server
+%global repo_name bc-hcc-rstudio-server
 %global app_name bc_hcc_rstudio_server
 %{!?package_version: %define package_version %{major}.%{minor}.%{patch}}
 %{!?package_release: %define package_release 1}
@@ -15,7 +15,7 @@ Summary:  Batch Connect - HCC RStudio Server
 Group:    System Environment/Daemons
 License:  MIT
 URL:      https://git.unl.edu/hcc/bc-hcc-rstudio-server
-Source0:  bc_hcc_rstudio_server.tar.gz
+Source0:  bc-hcc-rstudio-server.tar.gz
 
 Requires: ondemand
 
