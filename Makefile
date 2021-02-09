@@ -1,5 +1,6 @@
 # what
 PROG = bc-hcc-rstudio-server
+SPEC = packaging/ondemand-bc_hcc_rstudio_server.spec
 
 VERSION = $(shell ${GIT} describe --tags | ${SED} 's/-/_/g')
 
@@ -32,7 +33,7 @@ tar: ${PROG}-${VERSION}.tar.gz
 
 srpm: tar
 	${MOCK} -N -r ${ARCH} --buildsrpm --define='package_version ${VERSION}' --sources=${PROG}.tar.gz \
-        --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR} --plugin-option=root_cache:dir="${CACHEDIR}/%(root)s"
+        --spec=${SPEC} --resultdir=${RESULTDIR} --plugin-option=root_cache:dir="${CACHEDIR}/%(root)s"
 
 rpm: srpm
 	${MOCK} -N -r ${ARCH} --define='package_version ${VERSION}' --resultdir=${RESULTDIR} \
