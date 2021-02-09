@@ -11,6 +11,8 @@ rpm-build:
     - mkdir -p artifacts .cache
   script:
     - make rpm
+  after_script:
+    - sudo chown -R builder .cache
   artifacts:
     paths:
       - artifacts/
