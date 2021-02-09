@@ -14,4 +14,4 @@ rpm-build:
   artifacts:
     paths:
       - .artifacts/
-    name: "$CI_COMMIT_REF_NAME-$CI_COMMIT_TAG"
+    name: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
