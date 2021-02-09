@@ -13,8 +13,9 @@ MOCK = /usr/bin/mock
 
 # mock variables
 RESULTDIR ?= artifacts
-CACHEDIR ?= .cache
+CACHEDIR ?= .cache/mock
 ARCH ?= epel-7-x86_64
+CI_PROJECT_DIR ?= /tmp
 
 all: srpm rpm clean
 
@@ -30,11 +31,12 @@ ${PROG}-${VERSION}.tar.gz:
 tar: ${PROG}-${VERSION}.tar.gz
 
 srpm: tar
-	${MOCK} -r ${ARCH} --buildsrpm --define='package_version ${VERSION}' --sources=${PROG}.tar.gz \
-        --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR}
+	${MOCK} -N -r ${ARCH} --buildsrpm --define='package_version ${VERSION}' --sources=${PROG}.tar.gz \
+        --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR} --rootdir=${CI_PROJECT_DIR}/${CACHEDIR}
 
 rpm: srpm
-	${MOCK} -r ${ARCH} --define='package_version ${VERSION}' --resultdir=${RESULTDIR} --rebuild ${RESULTDIR}/*.src.rpm
+	${MOCK} -N -r ${ARCH} --define='package_version ${VERSION}' --resultdir=${RESULTDIR} \
+	--rootdir=${CI_PROJECT_DIR}/${CACHEDIR} --rebuild ${RESULTDIR}/*.src.rpm
 
 clean:
 	-${RM} ${PROG}.tar.gz
