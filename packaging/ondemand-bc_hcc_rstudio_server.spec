@@ -10,11 +10,11 @@
 Name:     ondemand-%{app_name}
 Version:  %{package_version}
 Release:  %{package_release}%{?dist}
-Summary:  SUMMARY
+Summary:  Batch Connect - HCC RStudio Server
 
 Group:    System Environment/Daemons
 License:  MIT
-URL:      https://git.unl.edu/hcc/bc-osc-rstudio-server
+URL:      https://git.unl.edu/hcc/bc-hcc-rstudio-server
 Source0:  bc_hcc_rstudio_server.tar.gz
 
 Requires: ondemand
