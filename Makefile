@@ -12,7 +12,7 @@ RPMBUILD = /usr/bin/rpmbuild
 MOCK = /usr/bin/mock
 
 # mock variables
-RESULTDIR ?= .artifacts
+RESULTDIR ?= artifacts
 CACHEDIR ?= .cache
 ARCH ?= epel-7-x86_64
 
