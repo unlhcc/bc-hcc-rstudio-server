@@ -8,12 +8,12 @@ rpm-build:
   tags:
     - docker
   before_script:
-    - mkdir -p .artifacts .cache
+    - mkdir -p artifacts .cache
   script:
     - make rpm
   artifacts:
     paths:
-      - .artifacts/
+      - artifacts/
     name: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
   cache:
     key: ${CI_COMMIT_REF_SLUG}
