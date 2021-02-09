@@ -32,11 +32,11 @@ tar: ${PROG}-${VERSION}.tar.gz
 
 srpm: tar
 	${MOCK} -N -r ${ARCH} --buildsrpm --define='package_version ${VERSION}' --sources=${PROG}.tar.gz \
-        --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR} --rootdir=${CI_PROJECT_DIR}/${CACHEDIR}
+        --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR} --plugin-option=root_cache:dir="${CACHEDIR}/%(root)s"
 
 rpm: srpm
 	${MOCK} -N -r ${ARCH} --define='package_version ${VERSION}' --resultdir=${RESULTDIR} \
-	--rootdir=${CI_PROJECT_DIR}/${CACHEDIR} --rebuild ${RESULTDIR}/*.src.rpm
+	--rebuild --plugin-option=root_cache:dir="${CACHEDIR}/%(root)s" ${RESULTDIR}/*.src.rpm
 
 clean:
 	-${RM} ${PROG}.tar.gz
