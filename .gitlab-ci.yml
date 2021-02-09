@@ -7,6 +7,8 @@ rpm-build:
   stage: build
   tags:
     - docker
+  before_script:
+    - mkdir -p .artifacts .cache
   script:
     - make rpm
   artifacts:

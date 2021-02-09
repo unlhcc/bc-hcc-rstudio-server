@@ -33,8 +33,9 @@ srpm: tar
 	${MOCK} -r ${ARCH} --buildsrpm --define='package_version ${VERSION}' --sources=${PROG}.tar.gz \
         --spec=packaging/ondemand-bc_hcc_rstudio_server.spec --resultdir=${RESULTDIR}
 
-rpm: tar
+rpm: srpm
 	${MOCK} -r ${ARCH} --define='package_version ${VERSION}' --resultdir=${RESULTDIR} --rebuild ${RESULTDIR}/*.src.rpm
 
 clean:
 	-${RM} ${PROG}.tar.gz
+	-${RM} ${RESULTDIR}/*.rpm
