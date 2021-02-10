@@ -1,6 +1,6 @@
 <%-
-  r_version = context.version.split(':')[0]
-  rstudio_version = context.version.split(':')[1]
+  r_version = context.version.blank? ? "r36" : context.version.split(':')[0]
+  rstudio_version = context.version.blank? ? "1.2" : context.version.split(':')[1]
 %>
 
 # Export the module function if it exists
@@ -11,7 +11,6 @@ port=$(find_port ${host})
 
 # Define a password and export it for RStudio authentication
 password="$(create_passwd 16)"
-#export SINGULARITYENV_RSTUDIO_PASSWORD="${password}"
 export RSTUDIO_PASSWORD="${password}"
 
 export rstudio_version="<%= rstudio_version %>"

@@ -2,8 +2,8 @@
 
 <%-
   session_dir = session.staged_root
-  r_version = context.version.split(':')[0]
-  rstudio_version = context.version.split(':')[1]
+  r_version = context.version.blank? ? "r36" : context.version.split(':')[0]
+  rstudio_version = context.version.blank? ? "1.2" : context.version.split(':')[1]
 %>
 
 # Load the required environment
