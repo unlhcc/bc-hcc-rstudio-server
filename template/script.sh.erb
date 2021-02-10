@@ -4,6 +4,7 @@
   session_dir = session.staged_root
   r_version = context.version.blank? ? "r36" : context.version.split(':')[0]
   rstudio_version = context.version.blank? ? "1.2" : context.version.split(':')[1]
+  rstudio_variant = context.variant.blank? ? "basic" : context.variant.strip
 %>
 
 # Load the required environment
@@ -23,7 +24,7 @@ setup_env () {
   module purge
   module load singularity
   mkdir /tmp/rstudio-run /tmp/rstudio-lib
-  export RSTUDIO_SERVER_IMAGE="/work/HCC/SINGULARITY/IMAGES/rstudio-<%= rstudio_version %>-<%= r_version %>.sif"
+  export RSTUDIO_SERVER_IMAGE="/work/HCC/SINGULARITY/IMAGES/rstudio-<%= rstudio_variant %>-<%= rstudio_version %>-<%= r_version %>.sif"
   export SINGULARITYENV_USER=$USER
   export SINGULARITY_BINDPATH="/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
   export PATH=/usr/lib/rstudio-server/bin:$PATH

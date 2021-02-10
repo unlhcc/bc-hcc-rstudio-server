@@ -81,10 +81,25 @@ attributes:
       - [
           "3.6 (RStudio 1.2)", "r36:1.2",
         ]
+  variant:
+    widget: select
+    label: "R variant"
+    help: "This defines the variant of R you want to load."
+    options:
+      - [
+          "Basic", "basic",
+        ]
+      - [
+          "Tidyverse", "tidyverse",
+        ]
+      - [
+          "Geospatial", "geospatial",
+        ]
 
 # Define all attributes, visible or not
 form:
   - version
+  - variant
   - bc_num_slots
   - bc_num_cores
   - bc_num_hours
