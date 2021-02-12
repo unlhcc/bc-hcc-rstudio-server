@@ -5,6 +5,11 @@
   r_version = context.version.blank? ? "r36" : context.version.split(':')[0]
   rstudio_version = context.version.blank? ? "1.2" : context.version.split(':')[1]
   rstudio_variant = context.variant.blank? ? "basic" : context.variant.strip
+  # set the user library path (based on version) to match with the module-provided R
+  r_libs_user = {
+    "r36" => "~/R/x86_64-conda_cos6-linux-gnu-library/3.6",
+    "r40" => "~/R/x86_64-conda_cos6-linux-gnu-library/4.0"
+  }
 %>
 
 # Load the required environment
@@ -29,6 +34,7 @@ setup_env () {
   export SINGULARITY_BINDPATH="/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
   export PATH=/usr/lib/rstudio-server/bin:$PATH
   export WORKING_DIR="<%= session_dir %>"
+  export R_LIBS_USER="<%= r_libs_user[r_version] %>"
   
 }
 setup_env
@@ -53,7 +59,6 @@ sed 's/^ \{2\}//' > "$WORKING_DIR/rsession.sh" << EOL
 
   # rsession.sh doesn't share the same env as the outside script, so these
   # need to be set explicitly
-  export R_LIBS_SITE="${R_LIBS_SITE}"
   export TZ="US/Central"
   export HOME=${HOME}
   export WORK=${WORK}
@@ -61,11 +66,12 @@ sed 's/^ \{2\}//' > "$WORKING_DIR/rsession.sh" << EOL
   export MODULEPATH_ROOT="$MODULEPATH_ROOT"
   export MODULEPATH="$MODULEPATH"
   export LMOD_PKG="$LMOD_PKG"
+  export R_LIBS_USER="${R_LIBS_USER}"
 
   # Launch the original command
   echo "Launching rsession..."
   set -x
-  exec rsession --r-libs-user "${R_LIBS_USER}" "\${@}"
+  exec rsession --r-libs-user ${R_LIBS_USER} "\${@}"
 EOL
 )
 chmod 700 "$WORKING_DIR/rsession.sh"
