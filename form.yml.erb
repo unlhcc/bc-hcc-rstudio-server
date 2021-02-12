@@ -10,7 +10,6 @@ attributes:
     value: "batch"
     help: |
       - `batch` - The normal general access partition
-      - `gpu` - The gpu partition
       - *other partitions may be specified if your account has access*
   bc_num_slots: 1
   bc_num_cores:
@@ -49,17 +48,8 @@ attributes:
     options:
       - ["short", "short"]
       - ["normal", "normal"]
-  bc_gres:
-    widget: "text_field"
-    label: "GRES"
-    help: "This field is used primarily for gpu submissions. You must specify a gres of at least `gpu` when using the GPU partition. Other possible values may be
- [found here](https://hcc.unl.edu/docs/submitting_jobs/submitting_gpu_jobs/#requesting-gpu-resources-in-your-slurm-script)."
-    value: ''
-  bc_constraint:
-    widget: "text_field"
-    label: "Job Constraints"
-    help: "Additional constraints for the job. Primarily used for specifying a [GPU type](https://hcc.unl.edu/docs/submitting_jobs/submitting_gpu_jobs/#available
--gpus) or [node type](https://hcc.unl.edu/docs/submitting_jobs/partitions/#use-of-infiniband-or-opa)."
+  bc_gres: ''
+  bc_constraint: ''
   bc_email_address:
     widget: "email_field"
     value: ""
