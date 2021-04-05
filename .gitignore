@@ -1,3 +1,7 @@
 /tmp/
 /local
 ._*
+.cache
+artifacts
+/tmp/
+*.tar.gz
