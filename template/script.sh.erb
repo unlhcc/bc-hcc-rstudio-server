@@ -32,7 +32,7 @@ setup_env () {
   mkdir /tmp/rstudio-run /tmp/rstudio-lib
   export RSTUDIO_SERVER_IMAGE="/work/HCC/SINGULARITY/IMAGES/rstudio-<%= rstudio_variant %>-<%= rstudio_version %>-<%= r_version %>.sif"
   export SINGULARITYENV_USER=$USER
-  export SINGULARITY_BINDPATH="/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
+  export SINGULARITY_BINDPATH="/sys/fs/cgroup,/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
   export PATH=/usr/lib/rstudio-server/bin:$PATH
   export WORKING_DIR="<%= session_dir %>"
   export R_LIBS_USER="<%= r_libs_user[r_version] %>"
