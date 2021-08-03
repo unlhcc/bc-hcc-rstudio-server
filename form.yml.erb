@@ -77,7 +77,7 @@ attributes:
   variant:
     widget: select
     label: "R variant"
-    help: "This defines the variant of R you want to load. [More details on what each variant includes.](https://hub.docker.com/r/rocker/r-ver)"
+    help: "This defines the variant of R you want to load. Details on the non-Bioconductor variants are found [here](https://hub.docker.com/r/rocker/r-ver).  The Bioconductor image is described [here](https://hub.docker.com/r/bioconductor/bioconductor_docker)."
     options:
       - [
           "Basic", "basic",
@@ -91,6 +91,10 @@ attributes:
       - [
           "Verse", "verse",
         ]
+      - [
+          "Bioconductor", "bioconductor",
+        ]
+
 
 # Define all attributes, visible or not
 form:
