@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Confirm username is supplied
 if [[ $# -lt 1 ]]; then
