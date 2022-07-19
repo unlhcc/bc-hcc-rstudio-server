@@ -69,6 +69,8 @@ sed 's/^ \{2\}//' > "$WORKING_DIR/rsession.sh" << EOL
   export MODULEPATH="$MODULEPATH"
   export LMOD_PKG="$LMOD_PKG"
   export R_LIBS_USER="${R_LIBS_USER}"
+  export RS_LOG_LEVEL=info
+  export RS_LOG_TYPE=stderr
 
   # Launch the original command
   echo "Launching rsession..."
@@ -96,4 +98,5 @@ singularity exec -B $WORKING_DIR "$RSTUDIO_SERVER_IMAGE" rserver \
  --auth-encrypt-password=0 \
  --rsession-path="${RSESSION_WRAPPER_FILE}" \
  --server-app-armor-enabled=0 \
- --secure-cookie-key-file="${TMPDIR}/rstudio-server/secure-cookie-key"
+ --secure-cookie-key-file="${TMPDIR}/rstudio-server/secure-cookie-key" \
+ --server-user=${USER}
