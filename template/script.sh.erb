@@ -71,7 +71,14 @@ sed 's/^ \{2\}//' > "$WORKING_DIR/rsession.sh" << EOL
   export R_LIBS_USER="${R_LIBS_USER}"
   export RS_LOG_LEVEL=info
   export RS_LOG_TYPE=stderr
-
+ # Lmod
+  . /util/opt/lmod/lmod/init/profile
+  export -f module
+  module use /util/opt/hcc-modules/Common
+  <%- unless context.addl_modules.blank? -%>
+  # Load additional modules
+  module load <%= context.addl_modules %>
+  <%- end -%>
   # Launch the original command
   echo "Launching rsession..."
   set -x

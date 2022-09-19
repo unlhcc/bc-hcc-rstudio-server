@@ -5,6 +5,11 @@ description: |
 
 # Define attributes that aren't meant to be modified by the user nor visible in the form
 attributes:
+  addl_modules:
+    label: "Additional modules (optional)"
+    help: |
+        <small>Space separated list of additional modules to load (eg. `blast/2.4`)</br/>
+        Full list for [Crane](https://hcc.unl.edu/docs/applications/modules/available_software_for_crane/) or [Swan](https://hcc.unl.edu/docs/applications/modules/available_software_for_swan/)</small>
   bc_queue:
     label: "Partition selection"
     value: "batch"
@@ -103,6 +108,7 @@ attributes:
 form:
   - version
   - variant
+  - addl_modules
   - bc_num_slots
   - bc_num_cores
   - bc_num_hours
