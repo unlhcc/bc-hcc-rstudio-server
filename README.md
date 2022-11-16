@@ -17,11 +17,11 @@ OnDemand node):
 - [Lmod] 6.0.1+ or any other `module restore` and `module load <modules>` based
   CLI used to load appropriate environments within the batch job before
   launching the RStudio Server.
-- [Singularity] 2.4.2+
-- A Singularity image similar to [rocker/rstudio]
+- [Apptainer] 2.4.2+
+- An Apptainer image similar to [rocker/rstudio]
 
 [RStudio Server]: https://www.rstudio.com/products/rstudio-server/
-[Singularity]: http://singularity.lbl.gov/
+[Apptainer]: http://apptainer.org
 [Lmod]: https://www.tacc.utexas.edu/research-development/tacc-projects/lmod
 [rocker/rstudio]: https://hub.docker.com/r/rocker/rstudio
 
