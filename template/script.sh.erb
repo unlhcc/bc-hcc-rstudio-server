@@ -18,22 +18,22 @@
 setup_env () {
   # The rserver container module should set these environment variables:
 
-  #   SINGULARITY_BINDPATH="/etc,/media,/mnt,/opt,/run,/srv,/usr,/var,/users"
+  #   APPTAINER_BINDPATH="/etc,/media,/mnt,/opt,/run,/srv,/usr,/var,/users"
   #   RSTUDIO_SERVER_IMAGE="/usr/local/project/ondemand/singularity/rstudio/rstudio_launcher_centos7.simg"
   #   PATH="$PATH:/path/to/R:/path/to/rstudio/rserver"
  
-  # SINGULARITY_BINDPATH is being used to bind all RStudio's requirements from
+  # APPTAINER_BINDPATH is being used to bind all RStudio's requirements from
   # the host into the guest, and so those values may vary between sites.
   export COMMON=${HOME/#\/home/\/common}
   . /util/opt/lmod/lmod/init/profile
   export -f module
   module use /util/opt/hcc-modules/Common
   module purge
-  module load singularity
+  module load apptainer
   mkdir /tmp/rstudio-run /tmp/rstudio-lib
-  export RSTUDIO_SERVER_IMAGE="/work/HCC/SINGULARITY/IMAGES/rstudio-<%= rstudio_variant %>-<%= rstudio_version %>-<%= r_version %>.sif"
-  export SINGULARITYENV_USER=$USER
-  export SINGULARITY_BINDPATH="/sys/fs/cgroup,/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
+  export RSTUDIO_SERVER_IMAGE="/work/HCC/APPTAINER/IMAGES/rstudio-<%= rstudio_variant %>-<%= rstudio_version %>-<%= r_version %>.sif"
+  export APPTAINERENV_USER=$USER
+  export APPTAINER_BINDPATH="/sys/fs/cgroup,/media,/mnt,/opt,/srv,/home,/work,/common,/util,/tmp/rstudio-run:/var/run,/tmp/rstudio-lib:/var/lib/rstudio-server"
   export PATH=/usr/lib/rstudio-server/bin:$PATH
   export WORKING_DIR="<%= session_dir %>"
   export R_LIBS_USER="<%= r_libs_user[r_version] %>"
@@ -98,7 +98,7 @@ set -x
 # Launch the RStudio Server
 echo "Starting up rserver..."
 
-singularity exec -B $WORKING_DIR "$RSTUDIO_SERVER_IMAGE" rserver \
+apptainer exec -B $WORKING_DIR "$RSTUDIO_SERVER_IMAGE" rserver \
  --www-port="${port}" \
  --auth-none=0 \
  --auth-pam-helper-path="${RSTUDIO_AUTH}" \
