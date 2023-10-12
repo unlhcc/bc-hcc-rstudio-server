@@ -26,6 +26,7 @@ setup_env () {
   # APPTAINER_BINDPATH is being used to bind all RStudio's requirements from
   # the host into the guest, and so those values may vary between sites.
   export COMMON=${HOME/#\/home/\/common}
+  export WORK=${HOME/#\/home/\/work}
   . /util/opt/lmod/lmod/init/profile
   export -f module
   module use /util/opt/hcc-modules/Common
